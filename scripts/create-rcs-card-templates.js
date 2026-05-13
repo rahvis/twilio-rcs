@@ -21,9 +21,10 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
 const publicBaseUrl = process.env.PUBLIC_BASE_URL || 'https://workonward.com';
-const publicBase = publicBaseUrl.replace(/\/+$/, '');
 const rcsAssetBaseUrl = process.env.RCS_ASSET_BASE_URL || publicBaseUrl;
 const rcsAssetBase = rcsAssetBaseUrl.replace(/\/+$/, '');
+const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
+const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
 const brand = {
   orange: '#ED6600',
@@ -50,21 +51,37 @@ function quickReply(title, id, chipList = true) {
   return action;
 }
 
+function urlAction(title, id, url, chipList = true) {
+  const action = {
+    type: 'URL',
+    title,
+    id,
+    url,
+    webview_size: 'FULL'
+  };
+  if (chipList) {
+    action.chip_list = true;
+  }
+  return action;
+}
+
 const cardTemplates = [
   {
     envKey: 'RCS_CONTENT_CONSENT_SID',
     friendlyName: 'workonward_rcs_consent_card',
-    textBody: `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${publicBaseUrl}/terms Privacy: ${publicBaseUrl}/privacy`,
+    textBody: `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`,
     card: {
       title: `${brandName} hiring messages`,
-      body: `Job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel. Terms: ${publicBase}/terms Privacy: ${publicBase}/privacy`,
+      body: `Job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.\nTerms: ${termsUrl}\nPrivacy: ${privacyUrl}`,
       media: [assetUrl('consent.png')],
       orientation: 'VERTICAL',
       height: 'SHORT',
       actions: [
         quickReply('YES', 'OPT_IN_YES'),
         quickReply('HELP', 'HELP_MENU'),
-        quickReply('STOP', 'STOP')
+        quickReply('STOP', 'STOP'),
+        urlAction('Terms', 'TERMS_URL', termsUrl),
+        urlAction('Privacy', 'PRIVACY_URL', privacyUrl)
       ]
     }
   },

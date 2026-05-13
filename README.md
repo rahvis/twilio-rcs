@@ -80,6 +80,8 @@ DATA_DIR=data
 BRAND_NAME=WorkOnward
 SUPPORT_EMAIL=support@workonward.com
 PUBLIC_BASE_URL=https://workonward.com
+MESSAGING_TERMS_URL=https://www.workonward.com/en/terms
+MESSAGING_PRIVACY_URL=https://www.workonward.com/en/privacy
 GEMINI_API_KEY=your_gemini_api_key_here
 GEMINI_MODEL=gemini-3-pro-preview
 ```
@@ -102,10 +104,17 @@ ${PUBLIC_BASE_URL}/assets/rcs/workonward-logo.png
 ${PUBLIC_BASE_URL}/assets/rcs/workonward-banner.png
 ```
 
-For local ngrok testing, keep `PUBLIC_BASE_URL` as the WorkOnward policy/domain URL and set `RCS_ASSET_BASE_URL` to the active ngrok HTTPS URL so Twilio can fetch the generated media assets:
+The opt-in consent prompt and RCS consent card must display the public WorkOnward policy links exactly:
+
+```text
+https://www.workonward.com/en/terms
+https://www.workonward.com/en/privacy
+```
+
+Keep `PUBLIC_BASE_URL` as the WorkOnward policy/domain URL and set `RCS_ASSET_BASE_URL` to the public app host that serves `/assets/rcs`. For the Railway deployment:
 
 ```env
-RCS_ASSET_BASE_URL=https://your-ngrok-domain.ngrok-free.app
+RCS_ASSET_BASE_URL=https://twilio-rcs-production.up.railway.app
 ```
 
 Recommended template mapping:
@@ -207,6 +216,12 @@ Or pass a public base URL explicitly:
 
 ```bash
 npm run webhook:configure -- https://your-public-domain.example
+```
+
+For the Railway deployment:
+
+```bash
+npm run webhook:configure -- https://twilio-rcs-production.up.railway.app
 ```
 
 ## State Storage

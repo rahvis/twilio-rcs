@@ -412,6 +412,7 @@ Status: working checklist for the MVP demo. Replace or extend this file with the
 - First contact returns a consent prompt before any hiring workflow starts.
 - The consent prompt identifies WorkOnward and the message purpose.
 - The consent prompt includes opt-in, help, opt-out, message frequency, message/data rate, Terms, and Privacy language.
+- The opt-in prompt must show the WorkOnward policy URLs exactly: `https://www.workonward.com/en/terms` and `https://www.workonward.com/en/privacy`.
 - Supported opt-in keywords: `YES`, `START`, `UNSTOP`.
 - Consent events are stored with phone number, timestamp, source, keyword, and message SID when available.
 
@@ -465,7 +466,7 @@ Status: working checklist for the MVP demo. Replace or extend this file with the
 - The RCS Sender accent color should be `#3D3D3D`, which meets Twilio's contrast requirement against white.
 - The WorkOnward orange `#ED6600` and green `#72A400` should appear in branded media and public pages, not as the official sender accent.
 - Generated sender review assets are available at `/assets/rcs/workonward-logo.png` and `/assets/rcs/workonward-banner.png`.
-- For local testing, `RCS_ASSET_BASE_URL` can point Twilio Content templates to the active ngrok host while policy links continue to use `PUBLIC_BASE_URL`.
+- `RCS_ASSET_BASE_URL` should point Twilio Content templates to the public app host serving `/assets/rcs`; for Railway production use `https://twilio-rcs-production.up.railway.app`.
 - Webhook signature validation must remain enabled in production.
 - Advanced Opt-Out should be reviewed for the Messaging Service so Twilio can forward `OptOutType` values where available.
 - The application must still handle keyword text directly when Twilio forwards the inbound message body.

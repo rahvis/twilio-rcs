@@ -2,11 +2,12 @@ import { DemoJob, UserProfile } from '../types';
 
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
-const publicBaseUrl = process.env.PUBLIC_BASE_URL || 'https://workonward.com';
+const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
+const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
 class MessageTemplateService {
   consentPrompt(): string {
-    return `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${publicBaseUrl}/terms Privacy: ${publicBaseUrl}/privacy`;
+    return `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
   optInConfirmation(): string {

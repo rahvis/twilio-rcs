@@ -12,6 +12,9 @@ dist/
 .env.local
 .env.*.local
 
+
+rcs.md
+
 # Logs
 logs/
 *.log

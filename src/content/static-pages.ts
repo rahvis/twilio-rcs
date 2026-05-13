@@ -1,6 +1,7 @@
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
 const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
-const publicBaseUrl = process.env.PUBLIC_BASE_URL || 'https://workonward.com';
+const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
+const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
 function page(title: string, body: string): string {
   return `<!doctype html>
@@ -145,7 +146,7 @@ export const staticPages = {
     <p>${brandName} local hiring messages may include job matches, application updates, interview coordination, onboarding reminders, and human support responses. This demo is not a guarantee of employment, interview availability, pay, or placement.</p>
     <h2>Messaging</h2>
     <p>By replying <code>YES</code> or <code>START</code>, users opt in to ${brandName} local hiring messages. Message frequency varies. Message and data rates may apply. <strong>Reply STOP to cancel.</strong> Reply HELP for help or email <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
-    <p>Privacy Policy: <a href="${publicBaseUrl}/privacy">${publicBaseUrl}/privacy</a>.</p>
+    <p>Privacy Policy: <a href="${privacyUrl}">${privacyUrl}</a>.</p>
     <p>Carriers are not liable for any delayed or undelivered messages.</p>
     <p>If you change your mobile number, please update your preferences or contact support so messaging records can be corrected.</p>
     <h2>Safe Use</h2>
@@ -180,7 +181,7 @@ export const staticPages = {
     'Consent Info',
     `<h1>Consent Info</h1>
     <p>${brandName} treats users as not opted in by default. A user must reply <code>YES</code> or <code>START</code> before accessing the demo hiring workflow.</p>
-    <p>Opt-in language: ${brandName} local hiring messages include job matches, application updates, interview coordination, and support. Message frequency varies. Message and data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: <a href="${publicBaseUrl}/terms">${publicBaseUrl}/terms</a>. Privacy: <a href="${publicBaseUrl}/privacy">${publicBaseUrl}/privacy</a>.</p>
+    <p>Opt-in language: ${brandName} local hiring messages include job matches, application updates, interview coordination, and support. Message frequency varies. Message and data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: <a href="${termsUrl}">${termsUrl}</a>. Privacy: <a href="${privacyUrl}">${privacyUrl}</a>.</p>
     <h2>Opt-In</h2>
     <p>Supported opt-in keywords are <code>YES</code>, <code>START</code>, and <code>UNSTOP</code>.</p>
     <h2>Opt-Out</h2>
