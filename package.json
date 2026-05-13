@@ -1,0 +1,44 @@
+{
+  "name": "twilio-sms-rcs-ai-sample",
+  "version": "1.0.0",
+  "description": "Twilio SMS/RCS deterministic local hiring demo with opt-in and opt-out flows",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "webhook:configure": "node scripts/configure-twilio-webhook.js",
+    "content:create-cards": "node scripts/create-rcs-card-templates.js",
+    "content:create-cards:dry-run": "node scripts/create-rcs-card-templates.js --dry-run",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "twilio",
+    "gemini",
+    "sms",
+    "rcs",
+    "consent",
+    "hiring",
+    "demo"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/genai": "^2.2.0",
+    "axios": "^1.7.9",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "twilio": "^5.3.5",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

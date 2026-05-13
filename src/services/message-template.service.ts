@@ -1,0 +1,78 @@
+import { DemoJob, UserProfile } from '../types';
+
+const brandName = process.env.BRAND_NAME || 'WorkOnward';
+const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
+const publicBaseUrl = process.env.PUBLIC_BASE_URL || 'https://workonward.com';
+
+class MessageTemplateService {
+  consentPrompt(): string {
+    return `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${publicBaseUrl}/terms Privacy: ${publicBaseUrl}/privacy`;
+  }
+
+  optInConfirmation(): string {
+    return `Welcome to ${brandName} local hiring messages. Msg freq varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.\n\nChoose a language:\n1. English\n2. Spanish\n3. Korean\nReply 1, 2, 3, or type a language.`;
+  }
+
+  optOutConfirmation(): string {
+    return `You have successfully been unsubscribed from ${brandName} local hiring messages. You will not receive any more messages from this number. Reply START to resubscribe.`;
+  }
+
+  help(): string {
+    return `${brandName} help: email ${supportEmail}. Msg freq varies. Msg & data rates may apply. Reply STOP to cancel or AGENT for a person. We never ask candidates for payment by message.`;
+  }
+
+  handoff(): string {
+    return `A ${brandName} team member has been requested. We will review this conversation and follow up when available. Reply STOP to opt out.`;
+  }
+
+  askLanguage(): string {
+    return `Choose a language for this demo:\n1. English\n2. Spanish\n3. Korean`;
+  }
+
+  askRole(user: UserProfile): string {
+    return `Choose a demo job category:\n1. Warehouse\n2. Restaurant\n3. Retail\n4. Caregiving`;
+  }
+
+  askLocation(): string {
+    return `Choose a demo location:\n1. Los Angeles 90011\n2. Koreatown 90020\n3. Long Beach 90802`;
+  }
+
+  askShift(): string {
+    return `Choose a demo shift:\n1. Morning\n2. Evening\n3. Weekend\n4. Flexible`;
+  }
+
+  formatMatches(jobs: DemoJob[]): string {
+    if (jobs.length === 0) {
+      return `I did not find a demo match for that search yet. Reply JOBS to try another role or AGENT for help from a person.`;
+    }
+
+    const lines = jobs.map((job, index) => {
+      const trust = job.verifiedEmployer && job.noFees ? 'Verified, no candidate fees' : 'Review details before applying';
+      return `${index + 1}. ${job.title} at ${job.employer} - ${job.city}, ${job.state}. ${job.payRange}. ${job.shifts.join('/')}. ${trust}.`;
+    });
+
+    return `Here is the same scripted demo carousel every time:\n${lines.join('\n')}\nReply APPLY, STATUS, INTERVIEW, JOBS, HELP, AGENT, or STOP to cancel.`;
+  }
+
+  applicationReceived(): string {
+    return `Thank you for applying through ${brandName}. This is a scripted demo confirmation. A verified employer coordinator would confirm next steps here. Do you need more help? Reply HELP, NO, or JOBS.`;
+  }
+
+  applicationClosing(): string {
+    return `You're welcome. Please feel free to explore more jobs anytime. Reply JOBS to see demo job matches again, HELP for support, or STOP to cancel.`;
+  }
+
+  applicationStatus(): string {
+    return `Demo status: your application is ready for employer review. No payment is required from candidates. Reply INTERVIEW for scheduling help or AGENT for support.`;
+  }
+
+  interviewHelp(): string {
+    return `Demo interview help: we can coordinate a morning, afternoon, evening, or weekend slot with the employer. Reply with your preferred time or AGENT for a person.`;
+  }
+
+  readyMenu(): string {
+    return `Reply APPLY to start a demo application, STATUS for an update, INTERVIEW for scheduling help, JOBS to search again, HELP for support, AGENT for a person, or STOP to cancel.`;
+  }
+}
+
+export default new MessageTemplateService();
