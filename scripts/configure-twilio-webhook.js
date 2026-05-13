@@ -47,6 +47,10 @@ async function resolveBaseUrl() {
     return argUrl.replace(/\/$/, '');
   }
 
+  if (process.env.APP_BASE_URL) {
+    return process.env.APP_BASE_URL.replace(/\/$/, '');
+  }
+
   const tunnels = await getJson('http://127.0.0.1:4040/api/tunnels');
   const httpsTunnel = tunnels.tunnels.find((tunnel) => tunnel.proto === 'https');
 

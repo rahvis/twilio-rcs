@@ -31,8 +31,9 @@ async function main(): Promise<void> {
       logger.info('Server started successfully', {
         port: config.PORT,
         environment: config.NODE_ENV,
-        webhookUrl: `http://localhost:${config.PORT}/webhook/sms`,
-        healthCheck: `http://localhost:${config.PORT}/health`
+        webhookUrl: `${config.APP_BASE_URL}/webhook/sms`,
+        healthCheck: `${config.APP_BASE_URL}/health`,
+        localHealthCheck: `http://localhost:${config.PORT}/health`
       });
 
       logger.info('Ready to receive messages');

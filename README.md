@@ -79,6 +79,7 @@ TWILIO_MESSAGING_SERVICE_SID=MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DATA_DIR=data
 BRAND_NAME=WorkOnward
 SUPPORT_EMAIL=support@workonward.com
+APP_BASE_URL=https://twilio-rcs-production.up.railway.app
 PUBLIC_BASE_URL=https://workonward.com
 MESSAGING_TERMS_URL=https://www.workonward.com/en/terms
 MESSAGING_PRIVACY_URL=https://www.workonward.com/en/privacy
@@ -187,7 +188,13 @@ npm start
 Configure the inbound message webhook to:
 
 ```text
-POST https://your-domain.com/webhook/sms
+POST https://twilio-rcs-production.up.railway.app/webhook/sms
+```
+
+Set `APP_BASE_URL` to the public host for this app. Startup logs use it to print the public webhook and health URLs. On Railway, keep:
+
+```env
+APP_BASE_URL=https://twilio-rcs-production.up.railway.app
 ```
 
 For local development with ngrok:
@@ -206,7 +213,7 @@ Keep `DISABLE_SIGNATURE_VALIDATION=false` in production.
 
 If Twilio Advanced Opt-Out is enabled and the webhook receives `OptOutType`, the app records the opt-in, opt-out, or help event without sending a duplicate keyword reply. Configure the Twilio Advanced Opt-Out replies to match the approved copy for `STOP`, `START`, and `HELP`.
 
-After starting ngrok, configure the Twilio Messaging Service webhook from the CLI:
+Configure the Twilio Messaging Service webhook from the CLI. If `APP_BASE_URL` is set, the script uses it automatically:
 
 ```bash
 npm run webhook:configure

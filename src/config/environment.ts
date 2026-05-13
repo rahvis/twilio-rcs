@@ -32,14 +32,27 @@ function getEnv(name: string, defaultValue: string): string {
   return process.env[name] || defaultValue;
 }
 
+function normalizeBaseUrl(value: string): string {
+  const withProtocol = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+  return withProtocol.replace(/\/+$/, '');
+}
+
 /**
  * Validate and export environment configuration
  */
 export function validateEnvironment(): Environment {
   try {
+    const port = parseInt(getEnv('PORT', '3000'), 10);
+    const appBaseUrl = normalizeBaseUrl(
+      process.env.APP_BASE_URL
+        || process.env.RAILWAY_PUBLIC_DOMAIN
+        || process.env.RCS_ASSET_BASE_URL
+        || `http://localhost:${port}`
+    );
+
     const config: Environment = {
       // Server
-      PORT: parseInt(getEnv('PORT', '3000'), 10),
+      PORT: port,
       NODE_ENV: (getEnv('NODE_ENV', 'development') as 'development' | 'production'),
 
       // Twilio
@@ -69,6 +82,7 @@ export function validateEnvironment(): Environment {
       DATA_DIR: getEnv('DATA_DIR', 'data'),
       SUPPORT_EMAIL: getEnv('SUPPORT_EMAIL', 'support@workonward.com'),
       BRAND_NAME: getEnv('BRAND_NAME', 'WorkOnward'),
+      APP_BASE_URL: appBaseUrl,
       PUBLIC_BASE_URL: getEnv('PUBLIC_BASE_URL', 'https://workonward.com')
     };
 
@@ -103,6 +117,7 @@ export function validateEnvironment(): Environment {
       DATA_DIR: config.DATA_DIR,
       SUPPORT_EMAIL: config.SUPPORT_EMAIL,
       BRAND_NAME: config.BRAND_NAME,
+      APP_BASE_URL: config.APP_BASE_URL,
       PUBLIC_BASE_URL: config.PUBLIC_BASE_URL,
       GEMINI_MODEL: config.GEMINI_MODEL,
       geminiConfigured: !!config.GEMINI_API_KEY,

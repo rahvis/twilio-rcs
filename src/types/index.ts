@@ -222,6 +222,7 @@ export interface Environment {
   DATA_DIR: string;
   SUPPORT_EMAIL: string;
   BRAND_NAME: string;
+  APP_BASE_URL: string;
   PUBLIC_BASE_URL: string;
   RCS_CONTENT_CONSENT_SID?: string;
   RCS_CONTENT_LANGUAGE_SID?: string;
