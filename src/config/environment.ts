@@ -80,7 +80,7 @@ export function validateEnvironment(): Environment {
       LOG_LEVEL: getEnv('LOG_LEVEL', 'info') as 'error' | 'warn' | 'info' | 'debug',
       MAX_IMAGE_SIZE_MB: parseInt(getEnv('MAX_IMAGE_SIZE_MB', '20'), 10),
       DATA_DIR: getEnv('DATA_DIR', 'data'),
-      SUPPORT_EMAIL: getEnv('SUPPORT_EMAIL', 'support@workonward.com'),
+      SUPPORT_EMAIL: getEnv('SUPPORT_EMAIL', 'help@workonward.com'),
       BRAND_NAME: getEnv('BRAND_NAME', 'WorkOnward'),
       APP_BASE_URL: appBaseUrl,
       PUBLIC_BASE_URL: getEnv('PUBLIC_BASE_URL', 'https://workonward.com')

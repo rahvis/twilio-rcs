@@ -1,5 +1,5 @@
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
+const supportEmail = process.env.SUPPORT_EMAIL || 'help@workonward.com';
 const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
 const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
@@ -127,9 +127,9 @@ export const staticPages = {
   privacy: page(
     'Privacy',
     `<h1>Privacy</h1>
-    <p>${brandName} uses messaging to help candidates discover local jobs, coordinate applications, and request hiring support.</p>
+    <p>${brandName} uses messaging to help candidates receive local hiring messages, including application and interview updates, job matches and job alerts, recruiting outreach, and support when requested.</p>
     <h2>Data We Collect</h2>
-    <p>For this demo, we store phone number, consent status, language preference, job search preferences, message timestamps, and audit events needed to prove opt-in and opt-out behavior.</p>
+    <p>For this demo, we store phone number, consent status, selected message categories, message timestamps, and audit events needed to prove opt-in and opt-out behavior.</p>
     <h2>How We Use Data</h2>
     <p>We use this data only to operate the local hiring messaging experience, provide support, prevent misuse, and maintain consent records.</p>
     <h2>Messaging Consent Data</h2>
@@ -143,9 +143,9 @@ export const staticPages = {
   terms: page(
     'Terms',
     `<h1>Terms</h1>
-    <p>${brandName} local hiring messages may include job matches, application updates, interview coordination, onboarding reminders, and human support responses. This demo is not a guarantee of employment, interview availability, pay, or placement.</p>
+    <p>${brandName} local hiring messages may include application and interview updates, job matches and job alerts, recruiting outreach, and human support responses when requested. This demo is not a guarantee of employment, interview availability, pay, or placement.</p>
     <h2>Messaging</h2>
-    <p>By replying <code>YES</code> or <code>START</code>, users opt in to ${brandName} local hiring messages. Message frequency varies. Message and data rates may apply. <strong>Reply STOP to cancel.</strong> Reply HELP for help or email <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
+    <p>${brandName} asks users to choose which RCS message categories they want to receive. Users can opt in one category at a time. Message frequency varies. Message and data rates may apply. <strong>Reply STOP to cancel.</strong> Reply HELP for help or email <a href="mailto:${supportEmail}">${supportEmail}</a>.</p>
     <p>Privacy Policy: <a href="${privacyUrl}">${privacyUrl}</a>.</p>
     <p>Carriers are not liable for any delayed or undelivered messages.</p>
     <p>If you change your mobile number, please update your preferences or contact support so messaging records can be corrected.</p>
@@ -180,10 +180,10 @@ export const staticPages = {
   consentInfo: page(
     'Consent Info',
     `<h1>Consent Info</h1>
-    <p>${brandName} treats users as not opted in by default. A user must reply <code>YES</code> or <code>START</code> before accessing the demo hiring workflow.</p>
-    <p>Opt-in language: ${brandName} local hiring messages include job matches, application updates, interview coordination, and support. Message frequency varies. Message and data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: <a href="${termsUrl}">${termsUrl}</a>. Privacy: <a href="${privacyUrl}">${privacyUrl}</a>.</p>
+    <p>${brandName} treats users as not opted in by default. The RCS flow asks users to choose which message categories they want to receive, one category at a time.</p>
+    <p>Opt-in language: Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: <a href="${termsUrl}">${termsUrl}</a>. Privacy: <a href="${privacyUrl}">${privacyUrl}</a>.</p>
     <h2>Opt-In</h2>
-    <p>Supported opt-in keywords are <code>YES</code>, <code>START</code>, and <code>UNSTOP</code>.</p>
+    <p>Users can choose <code>Opt in</code> or <code>Not now</code> for each category: application and interview updates, job matches and job alerts, and recruiting outreach.</p>
     <h2>Opt-Out</h2>
     <p>Supported opt-out keywords are <code>STOP</code>, <code>STOPALL</code>, <code>UNSUBSCRIBE</code>, <code>CANCEL</code>, <code>END</code>, <code>QUIT</code>, <code>REVOKE</code>, and <code>OPTOUT</code>.</p>
     <h2>Audit Records</h2>
@@ -193,16 +193,12 @@ export const staticPages = {
   demoGuide: page(
     'Demo Guide',
     `<h1>RCS Demo Guide</h1>
-    <p>This demo is interactive but predefined. Auditors can send the following messages in order to verify the core experience.</p>
+    <p>This demo is interactive but predefined. Auditors can send the following messages to verify the core consent experience.</p>
     <h2>Script</h2>
     <ol>
       <li>Send any first message, such as <code>Hi</code>. Expected: consent prompt.</li>
-      <li>Send <code>YES</code>. Expected: opt-in confirmation and language question.</li>
-      <li>Send <code>2</code> or tap Spanish. Expected: role choices.</li>
-      <li>Send <code>1</code> or tap Warehouse. Expected: location choices.</li>
-      <li>Send <code>1</code> or tap Los Angeles 90011. Expected: shift choices.</li>
-      <li>Send <code>1</code> or tap Morning. Expected: the same seeded demo job carousel/text every time.</li>
-      <li>Send <code>APPLY</code>, <code>STATUS</code>, or <code>INTERVIEW</code>. Expected: predefined next-step response.</li>
+      <li>Choose <code>Opt in</code> or <code>Not now</code> for each RCS consent category.</li>
+      <li>Expected: consent summary showing which categories are opted in and not opted in.</li>
       <li>Send <code>HELP</code>. Expected: support and opt-out instructions.</li>
       <li>Send <code>AGENT</code>. Expected: human escalation confirmation.</li>
       <li>Send <code>STOP</code>. Expected: local suppression record and opt-out behavior.</li>
