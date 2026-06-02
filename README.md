@@ -1,6 +1,6 @@
-# Twilio RCS Local Hiring Demo
+# Twilio RCS Local Hiring Messages
 
-This is a deterministic Twilio SMS/RCS demo for a WorkOnward-style local hiring workflow. It is built for approval review, with explicit opt-in, opt-out, help, human escalation, trust/safety pages, and seeded demo job matches.
+This is a deterministic Twilio SMS/RCS demo for a WorkOnward-style local hiring messaging flow. It is built for approval review, with explicit opt-in, opt-out, help, human escalation, trust/safety pages, and predefined message handling.
 
 The webhook does not use free-form AI for the MVP flow. All consent behavior, commands, state transitions, and responses are predefined.
 
@@ -9,22 +9,20 @@ The webhook does not use free-form AI for the MVP flow. All consent behavior, co
 Auditors can test the experience by messaging the Twilio sender:
 
 1. Send `Hi`
-2. Receive consent prompt
-3. Send `YES`
-4. Receive opt-in confirmation and language prompt
-5. Send `Spanish`
-6. Send `warehouse`
-7. Send `90011`
-8. Send `morning`
-9. Receive seeded local job matches
-10. Send `APPLY`, `STATUS`, or `INTERVIEW`
-11. Send `HELP`
-12. Send `AGENT`
-13. Send `STOP`
+2. Receive the RCS consent prompt with Terms, Privacy, HELP, STOP, frequency, and rates disclosure
+3. Choose `Opt in` or `Not now` for application and interview updates
+4. Choose `Opt in` or `Not now` for job matches and job alerts
+5. Choose `Opt in` or `Not now` for recruiting outreach
+6. Receive the opt-in summary confirmation
+7. Send `HELP`
+8. Send `AGENT`
+9. Send `STOP`
 
 ## Predefined Commands
 
-- Opt in: `YES`, `START`, `UNSTOP`
+- Opt in: `Opt in` per RCS category card
+- Decline category: `Not now` per RCS category card
+- Restart/resubscribe: `START`, `UNSTOP`
 - Opt out: `STOP`, `STOPALL`, `UNSUBSCRIBE`, `CANCEL`, `END`, `QUIT`, `REVOKE`, `OPTOUT`
 - Help: `HELP`, `INFO`
 - Human escalation: `AGENT`, `SUPPORT`, `HUMAN`, `PERSON`
@@ -78,7 +76,7 @@ TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
 TWILIO_MESSAGING_SERVICE_SID=MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DATA_DIR=data
 BRAND_NAME=WorkOnward
-SUPPORT_EMAIL=support@workonward.com
+SUPPORT_EMAIL=help@workonward.com
 APP_BASE_URL=https://twilio-rcs-production.up.railway.app
 PUBLIC_BASE_URL=https://workonward.com
 MESSAGING_TERMS_URL=https://www.workonward.com/en/terms

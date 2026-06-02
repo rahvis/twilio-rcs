@@ -69,7 +69,7 @@ TWILIO_MESSAGING_SERVICE_SID=<your-twilio-messaging-service-sid>
 
 DATA_DIR=/data
 BRAND_NAME=WorkOnward
-SUPPORT_EMAIL=support@workonward.com
+SUPPORT_EMAIL=help@workonward.com
 
 GEMINI_API_KEY=<your gemini key>
 
