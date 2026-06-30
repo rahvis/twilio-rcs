@@ -79,8 +79,7 @@ export async function handleIncomingMessage(
         messageTemplates.help(),
         'help',
         body.MessageSid,
-        body.OptOutType,
-        'help'
+        body.OptOutType
       );
       res.status(200).send();
       return;
@@ -93,8 +92,7 @@ export async function handleIncomingMessage(
         messageTemplates.optInConfirmation(),
         'opt_in',
         body.MessageSid,
-        body.OptOutType,
-        'language'
+        body.OptOutType
       );
       res.status(200).send();
       return;

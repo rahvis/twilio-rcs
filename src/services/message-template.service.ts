@@ -1,21 +1,21 @@
 import { DemoJob, UserProfile } from '../types';
 
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
+const supportEmail = process.env.SUPPORT_EMAIL || 'help@workonward.com';
 const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
 const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
 class MessageTemplateService {
   consentPrompt(): string {
-    return `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
+    return `Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
   optInConfirmation(): string {
-    return `Welcome to ${brandName} local hiring messages. Msg freq varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.\n\nChoose a language:\n1. English\n2. Spanish\n3. Korean\nReply 1, 2, 3, or type a language.`;
+    return `You are opted in to: application and interview updates, job matches and job alerts.\n\nYou are not opted in to: recruiting outreach.\n\nMsg freq varies. Msg & data rates may apply. Reply HELP for help or STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
   optOutConfirmation(): string {
-    return `You have successfully been unsubscribed from ${brandName} local hiring messages. You will not receive any more messages from this number. Reply START to resubscribe.`;
+    return `${brandName} local hiring messages: You have successfully been unsubscribed. You will not receive any more messages from this number. Reply START to resubscribe.`;
   }
 
   help(): string {
