@@ -9,6 +9,8 @@ import { getConfig } from '../config/environment';
 import { DemoTemplateKey } from '../types';
 import logger, { maskPhoneNumber } from '../utils/logger';
 
+const DEFAULT_RCS_CONSENT_CONTENT_SID = 'HXbbc88ded1e3da6aa68cb0eba9433a407';
+
 class TwilioService {
   private client: twilio.Twilio;
   private messagingServiceSid?: string;
@@ -28,7 +30,7 @@ class TwilioService {
     this.fromNumber = config.TWILIO_PHONE_NUMBER;
     this.authToken = config.TWILIO_AUTH_TOKEN;
     this.contentSids = {
-      consent: config.RCS_CONTENT_CONSENT_SID,
+      consent: config.RCS_CONTENT_CONSENT_SID || DEFAULT_RCS_CONSENT_CONTENT_SID,
       language: config.RCS_CONTENT_LANGUAGE_SID,
       role: config.RCS_CONTENT_ROLE_SID,
       location: config.RCS_CONTENT_LOCATION_SID,
