@@ -78,7 +78,7 @@ class ConsentService {
   optIn(phoneNumber: string, keyword: string, messageSid?: string): UserProfile {
     const user = userStoreService.getOrCreateUser(phoneNumber);
     user.consentStatus = 'opted_in';
-    user.flowStage = 'awaiting_language';
+    user.flowStage = 'ready_for_matches';
     user.handoffRequested = false;
     user.conversationState = {
       latestPresentedJobIds: []
