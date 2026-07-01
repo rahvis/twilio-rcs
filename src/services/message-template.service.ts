@@ -1,7 +1,7 @@
 import { DemoJob, UserProfile } from '../types';
 
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
-const supportEmail = process.env.SUPPORT_EMAIL || 'help@workonward.com';
+const supportEmail = process.env.RCS_HELP_EMAIL || 'help@workonward.com';
 const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
 const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
