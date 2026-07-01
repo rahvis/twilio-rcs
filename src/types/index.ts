@@ -121,6 +121,12 @@ export interface ConversationState {
 
 export type DemoTemplateKey =
   | 'consent'
+  | 'consentApplicationJob'
+  | 'consentApplicationRecruiting'
+  | 'consentJobRecruiting'
+  | 'consentApplication'
+  | 'consentJob'
+  | 'consentRecruiting'
   | 'language'
   | 'role'
   | 'location'

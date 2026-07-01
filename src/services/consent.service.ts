@@ -1,4 +1,4 @@
-import { ConsentRecord, OutboundDemoMessage, RcsCategoryKey, TwilioWebhookBody, UserProfile } from '../types';
+import { ConsentRecord, DemoTemplateKey, OutboundDemoMessage, RcsCategoryKey, TwilioWebhookBody, UserProfile } from '../types';
 import auditService from './audit.service';
 import messageTemplates from './message-template.service';
 import userStoreService from './user-store.service';
@@ -222,9 +222,9 @@ class ConsentService {
     userStoreService.saveUser(user);
 
     return {
-      response: messageTemplates.categoryDecisionPrompt(),
+      response: messageTemplates.consentPrompt(),
       category: 'category_opt_in_prompt',
-      templateKey: 'consent'
+      templateKey: this.templateKeyForRemaining(preferences)
     };
   }
 
@@ -260,6 +260,28 @@ class ConsentService {
     return categoryOrder
       .map((category) => `${category}:${preferences?.[category] === true ? 'opt_in' : 'not_now'}`)
       .join(',');
+  }
+
+  private templateKeyForRemaining(preferences: UserProfile['conversationState']['rcsCategoryOptIns']): DemoTemplateKey {
+    const remaining = categoryOrder.filter((category) => typeof preferences?.[category] !== 'boolean');
+    const key = remaining.join('|');
+
+    switch (key) {
+      case 'applicationUpdates|jobMatches':
+        return 'consentApplicationJob';
+      case 'applicationUpdates|recruitingOutreach':
+        return 'consentApplicationRecruiting';
+      case 'jobMatches|recruitingOutreach':
+        return 'consentJobRecruiting';
+      case 'applicationUpdates':
+        return 'consentApplication';
+      case 'jobMatches':
+        return 'consentJob';
+      case 'recruitingOutreach':
+        return 'consentRecruiting';
+      default:
+        return 'consent';
+    }
   }
 
   private recordConsent(

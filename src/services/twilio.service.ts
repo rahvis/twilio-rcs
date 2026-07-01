@@ -10,6 +10,14 @@ import { DemoTemplateKey } from '../types';
 import logger, { maskPhoneNumber } from '../utils/logger';
 
 const DEFAULT_RCS_CONSENT_CONTENT_SID = 'HXbbc88ded1e3da6aa68cb0eba9433a407';
+const RCS_CONSENT_REMAINING_CONTENT_SIDS: Partial<Record<DemoTemplateKey, string>> = {
+  consentApplicationJob: 'HXbcba5767dcbc36e92ad243d39e3f18d1',
+  consentApplicationRecruiting: 'HX5e2b3a5dae269a40e728bf47a06c38e3',
+  consentJobRecruiting: 'HXba86f9b93ef18405661f0310611f54c6',
+  consentApplication: 'HXee322b9c312a37a55e98b4122a0aed39',
+  consentJob: 'HX5f1c8376762e3dcc405dee1a7594c8ef',
+  consentRecruiting: 'HX2cc87190bc6e99792eeae5049e86efde'
+};
 
 class TwilioService {
   private client: twilio.Twilio;
@@ -31,6 +39,7 @@ class TwilioService {
     this.authToken = config.TWILIO_AUTH_TOKEN;
     this.contentSids = {
       consent: DEFAULT_RCS_CONSENT_CONTENT_SID,
+      ...RCS_CONSENT_REMAINING_CONTENT_SIDS,
       language: config.RCS_CONTENT_LANGUAGE_SID,
       role: config.RCS_CONTENT_ROLE_SID,
       location: config.RCS_CONTENT_LOCATION_SID,

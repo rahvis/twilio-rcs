@@ -16,10 +16,6 @@ class MessageTemplateService {
     return `Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
-  categoryDecisionPrompt(): string {
-    return `Recorded. Choose another ${brandName} RCS message category from the cards.`;
-  }
-
   optInConfirmation(preferences?: RcsCategoryOptInPreferences): string {
     const resolved = preferences || {
       applicationUpdates: true,
