@@ -86,18 +86,26 @@ export async function handleIncomingMessage(
     }
 
     if (command === 'opt_in') {
-      consentService.optIn(From, messageBody, body.MessageSid);
+      consentService.startCategoryOptIn(From, messageBody, body.MessageSid);
       await sendKeywordResponseIfNeeded(
         From,
-        messageTemplates.optInConfirmation(),
-        'opt_in',
+        messageTemplates.consentPrompt(),
+        'category_opt_in_prompt',
         body.MessageSid,
-        body.OptOutType
+        body.OptOutType,
+        'consent'
       );
       res.status(200).send();
       return;
     }
 
+    const categoryDecision = consentService.parseCategoryDecision(messageBody, body.ButtonPayload);
+    if (categoryDecision) {
+      const result = consentService.applyCategoryDecision(From, categoryDecision, body.MessageSid);
+      await sendResponse(From, result.response, result.category, body.MessageSid, result.templateKey);
+      res.status(200).send();
+      return;
+    }
     if (command === 'handoff') {
       consentService.handoff(From, body.MessageSid);
       await sendResponse(From, messageTemplates.handoff(), 'handoff', body.MessageSid, 'handoff');

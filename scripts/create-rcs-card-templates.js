@@ -19,7 +19,7 @@ const CONTENT_API_URL = 'https://content.twilio.com/v1/Content';
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
-const supportEmail = process.env.SUPPORT_EMAIL || 'support@workonward.com';
+const supportEmail = process.env.RCS_HELP_EMAIL || 'help@workonward.com';
 const publicBaseUrl = process.env.PUBLIC_BASE_URL || 'https://workonward.com';
 const rcsAssetBaseUrl = process.env.RCS_ASSET_BASE_URL || publicBaseUrl;
 const rcsAssetBase = rcsAssetBaseUrl.replace(/\/+$/, '');
@@ -68,20 +68,38 @@ function urlAction(title, id, url, chipList = true) {
 const cardTemplates = [
   {
     envKey: 'RCS_CONTENT_CONSENT_SID',
-    friendlyName: 'workonward_rcs_consent_card',
-    textBody: `${brandName} local hiring messages: job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply YES to opt in, HELP for help, STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`,
-    card: {
-      title: `${brandName} hiring messages`,
-      body: `Job matches, application updates, interview coordination, and support. Msg freq varies. Msg & data rates may apply. Reply HELP for help, STOP to cancel.\nTerms: ${termsUrl}\nPrivacy: ${privacyUrl}`,
-      media: [assetUrl('consent.png')],
-      orientation: 'VERTICAL',
-      height: 'SHORT',
-      actions: [
-        quickReply('YES', 'OPT_IN_YES'),
-        quickReply('HELP', 'HELP_MENU'),
-        quickReply('STOP', 'STOP'),
-        urlAction('Terms', 'TERMS_URL', termsUrl),
-        urlAction('Privacy', 'PRIVACY_URL', privacyUrl)
+    friendlyName: 'workonward_rcs_category_opt_in_carousel',
+    textBody: `Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`,
+    carousel: {
+      body: `Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`,
+      cards: [
+        {
+          title: 'Application & interview updates',
+          body: 'Get updates about applications, interviews, and hiring steps.',
+          media: assetUrl('apply-followup.png'),
+          actions: [
+            quickReply('Opt in', 'RCS_APPLICATION_UPDATES_OPT_IN', false),
+            quickReply('Not now', 'RCS_APPLICATION_UPDATES_NOT_NOW', false)
+          ]
+        },
+        {
+          title: 'Job matches & job alerts',
+          body: 'Receive relevant local job matches and alerts.',
+          media: assetUrl('job-warehouse.png'),
+          actions: [
+            quickReply('Opt in', 'RCS_JOB_MATCHES_OPT_IN', false),
+            quickReply('Not now', 'RCS_JOB_MATCHES_NOT_NOW', false)
+          ]
+        },
+        {
+          title: 'Recruiting outreach',
+          body: 'Hear from WorkOnward recruiting about roles that may fit your background.',
+          media: assetUrl('actions.png'),
+          actions: [
+            quickReply('Opt in', 'RCS_RECRUITING_OUTREACH_OPT_IN', false),
+            quickReply('Not now', 'RCS_RECRUITING_OUTREACH_NOT_NOW', false)
+          ]
+        }
       ]
     }
   },

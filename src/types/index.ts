@@ -99,6 +99,7 @@ export type ConsentStatus =
 
 export type CandidateFlowStage =
   | 'not_started'
+  | 'awaiting_category_opt_in'
   | 'awaiting_language'
   | 'awaiting_role'
   | 'awaiting_location'
@@ -107,10 +108,14 @@ export type CandidateFlowStage =
   | 'post_apply_help'
   | 'handoff_requested';
 
+export type RcsCategoryKey = 'applicationUpdates' | 'jobMatches' | 'recruitingOutreach';
+export type RcsCategoryOptInPreferences = Partial<Record<RcsCategoryKey, boolean>>;
+
 export interface ConversationState {
   role?: string;
   location?: string;
   shiftPreference?: string;
+  rcsCategoryOptIns?: RcsCategoryOptInPreferences;
   latestPresentedJobIds: string[];
 }
 

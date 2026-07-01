@@ -1,4 +1,4 @@
-import { ConsentRecord, TwilioWebhookBody, UserProfile } from '../types';
+import { ConsentRecord, OutboundDemoMessage, RcsCategoryKey, TwilioWebhookBody, UserProfile } from '../types';
 import auditService from './audit.service';
 import messageTemplates from './message-template.service';
 import userStoreService from './user-store.service';
@@ -10,6 +10,11 @@ export type InboundCommand =
   | 'help'
   | 'handoff'
   | 'none';
+
+export interface CategoryDecision {
+  category: RcsCategoryKey;
+  optedIn: boolean;
+}
 
 const optOutKeywords = new Set([
   'STOP',
@@ -25,6 +30,16 @@ const optOutKeywords = new Set([
 const optInKeywords = new Set(['START', 'YES', 'UNSTOP']);
 const helpKeywords = new Set(['HELP', 'INFO']);
 const handoffKeywords = new Set(['AGENT', 'SUPPORT', 'HUMAN', 'PERSON']);
+const categoryOrder: RcsCategoryKey[] = ['applicationUpdates', 'jobMatches', 'recruitingOutreach'];
+
+const categoryPayloads: Record<string, CategoryDecision> = {
+  RCS_APPLICATION_UPDATES_OPT_IN: { category: 'applicationUpdates', optedIn: true },
+  RCS_APPLICATION_UPDATES_NOT_NOW: { category: 'applicationUpdates', optedIn: false },
+  RCS_JOB_MATCHES_OPT_IN: { category: 'jobMatches', optedIn: true },
+  RCS_JOB_MATCHES_NOT_NOW: { category: 'jobMatches', optedIn: false },
+  RCS_RECRUITING_OUTREACH_OPT_IN: { category: 'recruitingOutreach', optedIn: true },
+  RCS_RECRUITING_OUTREACH_NOT_NOW: { category: 'recruitingOutreach', optedIn: false }
+};
 
 class ConsentService {
   classify(body: string, optOutType?: TwilioWebhookBody['OptOutType']): InboundCommand {
@@ -66,12 +81,33 @@ class ConsentService {
 
     if (user.consentStatus === 'unknown') {
       user.consentStatus = 'pending_opt_in';
-      user.flowStage = 'not_started';
+      user.flowStage = 'awaiting_category_opt_in';
+      user.conversationState = {
+        ...user.conversationState,
+        rcsCategoryOptIns: {},
+        latestPresentedJobIds: user.conversationState.latestPresentedJobIds || []
+      };
       userStoreService.saveUser(user);
       this.recordConsent(phoneNumber, 'pending_opt_in', undefined, messageSid);
       auditService.record(phoneNumber, 'consent_prompted', messageSid);
     }
 
+    return user;
+  }
+
+  startCategoryOptIn(phoneNumber: string, keyword: string, messageSid?: string): UserProfile {
+    const user = userStoreService.getOrCreateUser(phoneNumber);
+    user.consentStatus = 'pending_opt_in';
+    user.flowStage = 'awaiting_category_opt_in';
+    user.handoffRequested = false;
+    user.conversationState = {
+      ...user.conversationState,
+      rcsCategoryOptIns: {},
+      latestPresentedJobIds: []
+    };
+    userStoreService.saveUser(user);
+    this.recordConsent(phoneNumber, 'pending_opt_in', this.normalize(keyword), messageSid);
+    auditService.record(phoneNumber, 'category_opt_in_started', messageSid);
     return user;
   }
 
@@ -118,6 +154,80 @@ class ConsentService {
     return user;
   }
 
+  parseCategoryDecision(body: string, buttonPayload?: string): CategoryDecision | undefined {
+    const payload = buttonPayload?.trim().toUpperCase();
+    if (payload && categoryPayloads[payload]) {
+      return categoryPayloads[payload];
+    }
+
+    const normalized = this.normalize(body);
+    const optedIn = normalized.includes('OPT IN') || normalized.includes('YES');
+    const optedOut = normalized.includes('NOT NOW') || normalized.includes('NO');
+    if (!optedIn && !optedOut) {
+      return undefined;
+    }
+
+    if (normalized.includes('APPLICATION') || normalized.includes('INTERVIEW')) {
+      return { category: 'applicationUpdates', optedIn };
+    }
+
+    if (normalized.includes('MATCH') || normalized.includes('ALERT')) {
+      return { category: 'jobMatches', optedIn };
+    }
+
+    if (normalized.includes('RECRUIT')) {
+      return { category: 'recruitingOutreach', optedIn };
+    }
+
+    return undefined;
+  }
+
+  applyCategoryDecision(phoneNumber: string, decision: CategoryDecision, messageSid?: string): OutboundDemoMessage {
+    const user = userStoreService.getOrCreateUser(phoneNumber);
+    const preferences = {
+      ...(user.conversationState.rcsCategoryOptIns || {}),
+      [decision.category]: decision.optedIn
+    };
+
+    user.conversationState = {
+      ...user.conversationState,
+      rcsCategoryOptIns: preferences,
+      latestPresentedJobIds: user.conversationState.latestPresentedJobIds || []
+    };
+
+    auditService.record(phoneNumber, 'category_opt_in_decision', messageSid, {
+      category: decision.category,
+      optedIn: decision.optedIn
+    });
+
+    if (this.hasAllCategoryDecisions(preferences)) {
+      const hasAnyOptIn = categoryOrder.some((category) => preferences[category] === true);
+      user.consentStatus = hasAnyOptIn ? 'opted_in' : 'pending_opt_in';
+      user.flowStage = hasAnyOptIn ? 'ready_for_matches' : 'awaiting_category_opt_in';
+      userStoreService.saveUser(user);
+
+      if (hasAnyOptIn) {
+        this.recordConsent(phoneNumber, 'opt_in', this.formatCategoryKeyword(preferences), messageSid);
+        auditService.record(phoneNumber, 'opted_in', messageSid);
+      }
+
+      return {
+        response: messageTemplates.optInConfirmation(preferences),
+        category: 'category_opt_in_summary'
+      };
+    }
+
+    user.consentStatus = 'pending_opt_in';
+    user.flowStage = 'awaiting_category_opt_in';
+    userStoreService.saveUser(user);
+
+    return {
+      response: messageTemplates.categoryDecisionPrompt(),
+      category: 'category_opt_in_prompt',
+      templateKey: 'consent'
+    };
+  }
+
   canReceiveApplicationMessage(user: UserProfile): boolean {
     return user.consentStatus === 'opted_in';
   }
@@ -140,6 +250,16 @@ class ConsentService {
 
   normalize(body: string): string {
     return body.trim().replace(/\s+/g, ' ').toUpperCase();
+  }
+
+  private hasAllCategoryDecisions(preferences: UserProfile['conversationState']['rcsCategoryOptIns']): boolean {
+    return categoryOrder.every((category) => typeof preferences?.[category] === 'boolean');
+  }
+
+  private formatCategoryKeyword(preferences: UserProfile['conversationState']['rcsCategoryOptIns']): string {
+    return categoryOrder
+      .map((category) => `${category}:${preferences?.[category] === true ? 'opt_in' : 'not_now'}`)
+      .join(',');
   }
 
   private recordConsent(

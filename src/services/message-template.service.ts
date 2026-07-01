@@ -1,17 +1,35 @@
-import { DemoJob, UserProfile } from '../types';
+import { DemoJob, RcsCategoryKey, RcsCategoryOptInPreferences, UserProfile } from '../types';
 
 const brandName = process.env.BRAND_NAME || 'WorkOnward';
 const supportEmail = process.env.RCS_HELP_EMAIL || 'help@workonward.com';
 const termsUrl = process.env.MESSAGING_TERMS_URL || 'https://www.workonward.com/en/terms';
 const privacyUrl = process.env.MESSAGING_PRIVACY_URL || 'https://www.workonward.com/en/privacy';
 
+const rcsCategoryLabels: Record<RcsCategoryKey, string> = {
+  applicationUpdates: 'application and interview updates',
+  jobMatches: 'job matches and job alerts',
+  recruitingOutreach: 'recruiting outreach'
+};
+
 class MessageTemplateService {
   consentPrompt(): string {
     return `Choose which ${brandName} RCS messages you want to receive. You can opt in one category at a time. Msg freq varies. Msg & data rates may apply. Reply HELP for help. Reply STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
-  optInConfirmation(): string {
-    return `You are opted in to: application and interview updates, job matches and job alerts.\n\nYou are not opted in to: recruiting outreach.\n\nMsg freq varies. Msg & data rates may apply. Reply HELP for help or STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
+  categoryDecisionPrompt(): string {
+    return `Recorded. Choose another ${brandName} RCS message category from the cards.`;
+  }
+
+  optInConfirmation(preferences?: RcsCategoryOptInPreferences): string {
+    const resolved = preferences || {
+      applicationUpdates: true,
+      jobMatches: true,
+      recruitingOutreach: false
+    };
+    const optedIn = this.formatCategoryList(resolved, true);
+    const notOptedIn = this.formatCategoryList(resolved, false);
+
+    return `You are opted in to: ${optedIn}.\n\nYou are not opted in to: ${notOptedIn}.\n\nMsg freq varies. Msg & data rates may apply. Reply HELP for help or STOP to cancel. Terms: ${termsUrl} Privacy: ${privacyUrl}`;
   }
 
   optOutConfirmation(): string {
@@ -73,6 +91,14 @@ class MessageTemplateService {
 
   readyMenu(): string {
     return `Reply APPLY to start a demo application, STATUS for an update, INTERVIEW for scheduling help, JOBS to search again, HELP for support, AGENT for a person, or STOP to cancel.`;
+  }
+
+  private formatCategoryList(preferences: RcsCategoryOptInPreferences, expected: boolean): string {
+    const categories = (Object.keys(rcsCategoryLabels) as RcsCategoryKey[])
+      .filter((key) => preferences[key] === expected)
+      .map((key) => rcsCategoryLabels[key]);
+
+    return categories.length > 0 ? categories.join(', ') : 'none';
   }
 }
 
