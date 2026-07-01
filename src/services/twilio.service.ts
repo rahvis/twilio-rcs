@@ -30,7 +30,7 @@ class TwilioService {
     this.fromNumber = config.TWILIO_PHONE_NUMBER;
     this.authToken = config.TWILIO_AUTH_TOKEN;
     this.contentSids = {
-      consent: config.RCS_CONTENT_CONSENT_SID || DEFAULT_RCS_CONSENT_CONTENT_SID,
+      consent: DEFAULT_RCS_CONSENT_CONTENT_SID,
       language: config.RCS_CONTENT_LANGUAGE_SID,
       role: config.RCS_CONTENT_ROLE_SID,
       location: config.RCS_CONTENT_LOCATION_SID,
