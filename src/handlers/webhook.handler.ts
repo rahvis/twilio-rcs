@@ -62,13 +62,9 @@ export async function handleIncomingMessage(
       consentService.optOut(From, messageBody, body.MessageSid);
       sessionService.deleteSession(From);
       await userStoreService.flush();
-      await sendKeywordResponseIfNeeded(
-        From,
-        messageTemplates.optOutConfirmation(),
-        'opt_out',
-        body.MessageSid,
-        body.OptOutType
-      );
+      auditService.record(From, 'twilio_opt_out_response_owned', body.MessageSid, {
+        category: 'opt_out'
+      });
       res.status(200).send();
       return;
     }
