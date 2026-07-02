@@ -93,6 +93,13 @@ export async function handleIncomingMessage(
           category: 'category_opt_in_prompt',
           optOutType: body.OptOutType
         });
+        await sendResponse(
+          From,
+          messageTemplates.consentPrompt(),
+          'category_opt_in_cards_after_twilio_start',
+          body.MessageSid,
+          'consent'
+        );
         res.status(200).send();
         return;
       }
