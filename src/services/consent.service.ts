@@ -184,8 +184,31 @@ class ConsentService {
 
   applyCategoryDecision(phoneNumber: string, decision: CategoryDecision, messageSid?: string): OutboundDemoMessage {
     const user = userStoreService.getOrCreateUser(phoneNumber);
+    const existingPreferences = user.conversationState.rcsCategoryOptIns || {};
+
+    if (typeof existingPreferences[decision.category] === 'boolean') {
+      auditService.record(phoneNumber, 'duplicate_category_opt_in_decision_ignored', messageSid, {
+        category: decision.category,
+        attemptedOptIn: decision.optedIn,
+        existingOptIn: existingPreferences[decision.category]
+      });
+
+      if (this.hasAllCategoryDecisions(existingPreferences)) {
+        return {
+          response: messageTemplates.optInConfirmation(existingPreferences),
+          category: 'category_opt_in_summary'
+        };
+      }
+
+      return {
+        response: messageTemplates.consentPrompt(),
+        category: 'category_opt_in_prompt',
+        templateKey: this.templateKeyForRemaining(existingPreferences)
+      };
+    }
+
     const preferences = {
-      ...(user.conversationState.rcsCategoryOptIns || {}),
+      ...existingPreferences,
       [decision.category]: decision.optedIn
     };
 
