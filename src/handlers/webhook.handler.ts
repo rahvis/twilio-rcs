@@ -84,14 +84,24 @@ export async function handleIncomingMessage(
     }
 
     if (command === 'opt_in') {
+      const wasOptedOut = user.consentStatus === 'opted_out';
       consentService.startCategoryOptIn(From, messageBody, body.MessageSid);
       await userStoreService.flush();
-      await sendKeywordResponseIfNeeded(
+
+      if (body.OptOutType === 'START' && wasOptedOut) {
+        auditService.record(From, 'twilio_keyword_response_used', body.MessageSid, {
+          category: 'category_opt_in_prompt',
+          optOutType: body.OptOutType
+        });
+        res.status(200).send();
+        return;
+      }
+
+      await sendResponse(
         From,
         messageTemplates.consentPrompt(),
         'category_opt_in_prompt',
         body.MessageSid,
-        body.OptOutType,
         'consent'
       );
       res.status(200).send();
