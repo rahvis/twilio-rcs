@@ -61,6 +61,7 @@ export async function handleIncomingMessage(
     if (command === 'opt_out') {
       consentService.optOut(From, messageBody, body.MessageSid);
       sessionService.deleteSession(From);
+      await userStoreService.flush();
       await sendKeywordResponseIfNeeded(
         From,
         messageTemplates.optOutConfirmation(),
@@ -74,6 +75,7 @@ export async function handleIncomingMessage(
 
     if (command === 'help') {
       consentService.help(From, body.MessageSid);
+      await userStoreService.flush();
       await sendKeywordResponseIfNeeded(
         From,
         messageTemplates.help(),
@@ -87,6 +89,7 @@ export async function handleIncomingMessage(
 
     if (command === 'opt_in') {
       consentService.startCategoryOptIn(From, messageBody, body.MessageSid);
+      await userStoreService.flush();
       await sendKeywordResponseIfNeeded(
         From,
         messageTemplates.consentPrompt(),
@@ -102,12 +105,14 @@ export async function handleIncomingMessage(
     const categoryDecision = consentService.parseCategoryDecision(messageBody, body.ButtonPayload);
     if (categoryDecision) {
       const result = consentService.applyCategoryDecision(From, categoryDecision, body.MessageSid);
+      await userStoreService.flush();
       await sendResponse(From, result.response, result.category, body.MessageSid, result.templateKey);
       res.status(200).send();
       return;
     }
     if (command === 'handoff') {
       consentService.handoff(From, body.MessageSid);
+      await userStoreService.flush();
       await sendResponse(From, messageTemplates.handoff(), 'handoff', body.MessageSid, 'handoff');
       res.status(200).send();
       return;
@@ -115,6 +120,7 @@ export async function handleIncomingMessage(
 
     if (user.consentStatus === 'unknown' || user.consentStatus === 'pending_opt_in') {
       consentService.ensurePendingOptIn(From, body.MessageSid);
+      await userStoreService.flush();
       await sendResponse(From, messageTemplates.consentPrompt(), 'consent_prompt', body.MessageSid, 'consent');
       res.status(200).send();
       return;

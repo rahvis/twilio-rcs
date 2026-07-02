@@ -6,6 +6,7 @@
 import { Server } from 'http';
 import { getConfig } from './config/environment';
 import { createServer } from './server';
+import userStoreService from './services/user-store.service';
 import logger from './utils/logger';
 
 /**
@@ -22,6 +23,8 @@ async function main(): Promise<void> {
       nodeEnv: config.NODE_ENV,
       port: config.PORT
     });
+
+    await userStoreService.initialize();
 
     // Create Express server
     const app = createServer();
@@ -43,11 +46,10 @@ async function main(): Promise<void> {
     const shutdown = async (signal: string) => {
       logger.info(`${signal} received, starting graceful shutdown`);
 
-      server.close(() => {
+      server.close(async () => {
         logger.info('HTTP server closed');
 
-        // Additional cleanup if needed
-        // e.g., close database connections, flush logs, etc.
+        await userStoreService.close();
 
         logger.info('Graceful shutdown complete');
         process.exit(0);

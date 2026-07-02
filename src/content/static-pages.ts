@@ -187,7 +187,7 @@ export const staticPages = {
     <h2>Opt-Out</h2>
     <p>Supported opt-out keywords are <code>STOP</code>, <code>STOPALL</code>, <code>UNSUBSCRIBE</code>, <code>CANCEL</code>, <code>END</code>, <code>QUIT</code>, <code>REVOKE</code>, and <code>OPTOUT</code>.</p>
     <h2>Audit Records</h2>
-    <p>The demo stores consent records and audit events in a local JSON state file configured by <code>DATA_DIR</code>.</p>`
+    <p>The demo stores consent records and audit events in the configured persistent state store. When MongoDB is configured, consent is persisted there; otherwise the demo falls back to the local JSON state file configured by <code>DATA_DIR</code>.</p>`
   ),
 
   demoGuide: page(
