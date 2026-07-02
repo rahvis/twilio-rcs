@@ -85,6 +85,7 @@ export async function handleIncomingMessage(
 
     if (command === 'opt_in') {
       const wasOptedOut = user.consentStatus === 'opted_out';
+      const isStartKeyword = messageBody.trim().toUpperCase() === 'START';
       consentService.startCategoryOptIn(From, messageBody, body.MessageSid);
       await userStoreService.flush();
 
@@ -97,6 +98,24 @@ export async function handleIncomingMessage(
           From,
           messageTemplates.consentPrompt(),
           'category_opt_in_cards_after_twilio_start',
+          body.MessageSid,
+          'consent'
+        );
+        res.status(200).send();
+        return;
+      }
+
+      if (isStartKeyword && !wasOptedOut) {
+        await sendPlainResponse(
+          From,
+          messageTemplates.consentPrompt(),
+          'category_opt_in_text',
+          body.MessageSid
+        );
+        await sendResponse(
+          From,
+          messageTemplates.consentPrompt(),
+          'category_opt_in_cards',
           body.MessageSid,
           'consent'
         );
@@ -166,6 +185,31 @@ export async function handleIncomingMessage(
     });
 
     res.status(200).send();
+  }
+}
+
+async function sendPlainResponse(
+  to: string,
+  message: string,
+  category: string,
+  messageSid?: string
+): Promise<void> {
+  try {
+    await twilioService.sendMessage(to, message);
+    userStoreService.markOutbound(to);
+    auditService.record(to, 'outbound_sent', messageSid, {
+      category,
+      messageLength: message.length
+    });
+  } catch (error) {
+    auditService.record(to, 'outbound_failed', messageSid, {
+      category
+    });
+    logger.error('Failed to send RCS/SMS plain response', {
+      to: maskPhoneNumber(to),
+      category,
+      error
+    });
   }
 }
 
