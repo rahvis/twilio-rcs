@@ -78,8 +78,8 @@ const cardTemplates = [
           body: 'Get updates about applications, interviews, and hiring steps.',
           media: assetUrl('apply-followup.png'),
           actions: [
-            quickReply('Opt in', 'RCS_APPLICATION_UPDATES_OPT_IN', false),
-            quickReply('Not now', 'RCS_APPLICATION_UPDATES_NOT_NOW', false)
+            quickReply('Opt in', 'OPT_IN_TO_APPLICATION_UPDATES', false),
+            quickReply('Not now', 'NOT_NOW_FOR_APPLICATION_UPDATES', false)
           ]
         },
         {
@@ -87,8 +87,8 @@ const cardTemplates = [
           body: 'Receive relevant local job matches and alerts.',
           media: assetUrl('job-warehouse.png'),
           actions: [
-            quickReply('Opt in', 'RCS_JOB_MATCHES_OPT_IN', false),
-            quickReply('Not now', 'RCS_JOB_MATCHES_NOT_NOW', false)
+            quickReply('Opt in', 'OPT_IN_TO_JOB_MATCHES', false),
+            quickReply('Not now', 'NOT_NOW_FOR_JOB_MATCHES', false)
           ]
         },
         {
@@ -96,8 +96,8 @@ const cardTemplates = [
           body: 'Hear from WorkOnward recruiting about roles that may fit your background.',
           media: assetUrl('actions.png'),
           actions: [
-            quickReply('Opt in', 'RCS_RECRUITING_OUTREACH_OPT_IN', false),
-            quickReply('Not now', 'RCS_RECRUITING_OUTREACH_NOT_NOW', false)
+            quickReply('Opt in', 'OPT_IN_TO_RECRUITING_OUTREACH', false),
+            quickReply('Not now', 'NOT_NOW_FOR_RECRUITING_OUTREACH', false)
           ]
         }
       ]

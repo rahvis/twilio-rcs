@@ -14,6 +14,7 @@ export type InboundCommand =
 export interface CategoryDecision {
   category: RcsCategoryKey;
   optedIn: boolean;
+  decisionText: string;
 }
 
 const optOutKeywords = new Set([
@@ -31,14 +32,34 @@ const optInKeywords = new Set(['START', 'YES', 'UNSTOP']);
 const helpKeywords = new Set(['HELP', 'INFO']);
 const handoffKeywords = new Set(['AGENT', 'SUPPORT', 'HUMAN', 'PERSON']);
 const categoryOrder: RcsCategoryKey[] = ['applicationUpdates', 'jobMatches', 'recruitingOutreach'];
+const categoryLabels: Record<RcsCategoryKey, string> = {
+  applicationUpdates: 'application and interview updates',
+  jobMatches: 'job matches and job alerts',
+  recruitingOutreach: 'recruiting outreach'
+};
+
+function categoryDecision(category: RcsCategoryKey, optedIn: boolean): CategoryDecision {
+  const action = optedIn ? 'opt in to' : 'not now for';
+  return {
+    category,
+    optedIn,
+    decisionText: `${action} ${categoryLabels[category]}`
+  };
+}
 
 const categoryPayloads: Record<string, CategoryDecision> = {
-  RCS_APPLICATION_UPDATES_OPT_IN: { category: 'applicationUpdates', optedIn: true },
-  RCS_APPLICATION_UPDATES_NOT_NOW: { category: 'applicationUpdates', optedIn: false },
-  RCS_JOB_MATCHES_OPT_IN: { category: 'jobMatches', optedIn: true },
-  RCS_JOB_MATCHES_NOT_NOW: { category: 'jobMatches', optedIn: false },
-  RCS_RECRUITING_OUTREACH_OPT_IN: { category: 'recruitingOutreach', optedIn: true },
-  RCS_RECRUITING_OUTREACH_NOT_NOW: { category: 'recruitingOutreach', optedIn: false }
+  RCS_APPLICATION_UPDATES_OPT_IN: categoryDecision('applicationUpdates', true),
+  RCS_APPLICATION_UPDATES_NOT_NOW: categoryDecision('applicationUpdates', false),
+  RCS_JOB_MATCHES_OPT_IN: categoryDecision('jobMatches', true),
+  RCS_JOB_MATCHES_NOT_NOW: categoryDecision('jobMatches', false),
+  RCS_RECRUITING_OUTREACH_OPT_IN: categoryDecision('recruitingOutreach', true),
+  RCS_RECRUITING_OUTREACH_NOT_NOW: categoryDecision('recruitingOutreach', false),
+  OPT_IN_TO_APPLICATION_UPDATES: categoryDecision('applicationUpdates', true),
+  NOT_NOW_FOR_APPLICATION_UPDATES: categoryDecision('applicationUpdates', false),
+  OPT_IN_TO_JOB_MATCHES: categoryDecision('jobMatches', true),
+  NOT_NOW_FOR_JOB_MATCHES: categoryDecision('jobMatches', false),
+  OPT_IN_TO_RECRUITING_OUTREACH: categoryDecision('recruitingOutreach', true),
+  NOT_NOW_FOR_RECRUITING_OUTREACH: categoryDecision('recruitingOutreach', false)
 };
 
 class ConsentService {
@@ -168,15 +189,15 @@ class ConsentService {
     }
 
     if (normalized.includes('APPLICATION') || normalized.includes('INTERVIEW')) {
-      return { category: 'applicationUpdates', optedIn };
+      return categoryDecision('applicationUpdates', optedIn);
     }
 
     if (normalized.includes('MATCH') || normalized.includes('ALERT')) {
-      return { category: 'jobMatches', optedIn };
+      return categoryDecision('jobMatches', optedIn);
     }
 
     if (normalized.includes('RECRUIT')) {
-      return { category: 'recruitingOutreach', optedIn };
+      return categoryDecision('recruitingOutreach', optedIn);
     }
 
     return undefined;
@@ -190,7 +211,8 @@ class ConsentService {
       auditService.record(phoneNumber, 'duplicate_category_opt_in_decision_ignored', messageSid, {
         category: decision.category,
         attemptedOptIn: decision.optedIn,
-        existingOptIn: existingPreferences[decision.category]
+        existingOptIn: existingPreferences[decision.category],
+        decisionText: decision.decisionText
       });
 
       if (this.hasAllCategoryDecisions(existingPreferences)) {
@@ -220,7 +242,8 @@ class ConsentService {
 
     auditService.record(phoneNumber, 'category_opt_in_decision', messageSid, {
       category: decision.category,
-      optedIn: decision.optedIn
+      optedIn: decision.optedIn,
+      decisionText: decision.decisionText
     });
 
     if (this.hasAllCategoryDecisions(preferences)) {
