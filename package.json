@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Twilio SMS/RCS deterministic local hiring demo with opt-in and opt-out flows",
   "main": "dist/index.js",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
